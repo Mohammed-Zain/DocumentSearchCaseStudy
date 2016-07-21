@@ -3,6 +3,8 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Search a document to show how many times a phrase or word appears. Three different search
@@ -94,7 +96,7 @@ public class DocumentSearch extends JDialog {
      *
      * @return the number of times the text is found in the file
      */
-    private int stringMatchSearch(String textToSearch, File fileToSearch) throws IOException {
+    public int stringMatchSearch(String textToSearch, File fileToSearch) throws IOException {
         int matches = 0;
         String stringLine;
 
@@ -103,10 +105,18 @@ public class DocumentSearch extends JDialog {
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
         while ((stringLine = br.readLine()) != null) {
-            String[] words = stringLine.split(" ");
-            for (String text : words) {
-                if (text.equalsIgnoreCase(textToSearch)) {
+            if (textToSearch.contains(" ")) {
+                stringLine = stringLine.toUpperCase();
+                textToSearch = textToSearch.toUpperCase();
+                if (stringLine.contains(textToSearch)) {
                     matches++;
+                }
+            } else {
+                String[] words = stringLine.split(" ");
+                for (String text : words) {
+                    if (text.equalsIgnoreCase(textToSearch)) {
+                        matches++;
+                    }
                 }
             }
         }
@@ -123,7 +133,7 @@ public class DocumentSearch extends JDialog {
      *
      * @return the number of times the text is found in the file
      */
-    private int indexedSearch(String textToSearch, File fileToSearch) throws IOException{
+    public int indexedSearch(String textToSearch, File fileToSearch) throws IOException{
 
         Map<String, Integer> countByWords = new HashMap<String, Integer>();
         Scanner s = new Scanner(fileToSearch);
@@ -144,6 +154,24 @@ public class DocumentSearch extends JDialog {
             return 0;
         }
     }
+//
+//
+//    public Map<String, Integer> getCountByWords(String textToSearch, File fileToSearch) throws IOException{
+//        Map<String, Integer> countByWords = new HashMap<String, Integer>();
+//        Scanner s = new Scanner(fileToSearch);
+//        while (s.hasNext()) {
+//            String next = s.next();
+//            next = next.toUpperCase();
+//            if (countByWords.containsKey(next)) {
+//                countByWords.put(next, countByWords.get(next) + 1);
+//            } else {
+//                countByWords.put(next, 1);
+//            }
+//        }
+//        s.close();
+//
+//        return countByWords;
+//    }
 
     /**
      * searches the file given for the text given and returns the number of occurrences
@@ -154,8 +182,22 @@ public class DocumentSearch extends JDialog {
      *
      * @return the number of times the text is found in the file
      */
-    private int regExSearch(String textToSearch, File fileToSearch) {
+    private int regExSearch(String textToSearch, File fileToSearch) throws IOException {
         int matches = 0;
+//        String stringLine;
+//
+//        FileInputStream fstream = new FileInputStream(fileToSearch);
+//        DataInputStream in = new DataInputStream(fstream);
+//        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+//
+//        while ((stringLine = br.readLine()) != null) {
+//            Pattern pattern = Pattern.compile(textToSearch);
+//            Matcher matcher = pattern.matcher(stringLine);
+//
+//            while (matcher.find()) {
+//                matches++;
+//            }
+//        }
 
         return matches;
     }
@@ -213,6 +255,13 @@ public class DocumentSearch extends JDialog {
                 break;
             case REGULAR_EXPRESSION_SEARCH:
                 //perform regular expression search on each file
+//                try{
+//                    results.add(regExSearch(mSearchPhrase, new File(FILE_LIST.get(0))));
+//                    results.add(regExSearch(mSearchPhrase, new File(FILE_LIST.get(1))));
+//                    results.add(regExSearch(mSearchPhrase, new File(FILE_LIST.get(2))));
+//                }catch(IOException e){
+//                    e.printStackTrace();
+//                }
                 break;
             case INDEXED_SEARCH:
                 //perform indexed search on each file
